@@ -16,9 +16,9 @@
       canvas.height = video.offsetHeight;
       canvas.width = video.offsetWidth;
       ctx.drawImage(video, 0, 0, video.offsetWidth, video.offsetHeight);
-      const rect = [100, 100, 20, 20];
+      const rect = [300, 150, 20, 20];
       const d = ctx.getImageData(...rect);
-      ctx.strokeStyle = '#f00';
+      ctx.strokeStyle = 'yellow';
       ctx.strokeRect(...rect);
       const color = getAverageColor(d);
       const box = document.querySelector('#vidbox');
@@ -71,7 +71,7 @@
   <div style="display: flex; align-items: center">
     <button>Do Thing</button>
     <video loop muted playsinline autoplay controls style="width: 600px">
-      <source src="Big_Buck_Bunny_720_10s_10MB.mp4" type="video/mp4"/>
+      <source src="Jellyfish_1080_10s_30MB.mp4" type="video/mp4"/>
     </video>
     <canvas id="vidcanvas"></canvas>
     <div

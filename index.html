@@ -8,9 +8,27 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
+    const button = document.querySelector('button');
+    const video = document.querySelector('video');
+    button.addEventListener('click', function() {
+      const canvas = document.querySelector('#vidcanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.height = video.offsetHeight;
+      canvas.width = video.offsetWidth;
+      ctx.drawImage(video, 0, 0, video.offsetWidth, video.offsetHeight);
+      const rect = [100, 100, 20, 20];
+      const d = ctx.getImageData(...rect);
+      ctx.strokeStyle = '#f00';
+      ctx.strokeRect(...rect);
+      const color = getAverageColor(d);
+      const box = document.querySelector('#vidbox');
+      box.style.backgroundColor = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`;
+      console.log(color);
+    });
+
     const img = document.querySelector('#pic');
     img.addEventListener('load', function() {
-      const canvas = document.querySelector('canvas');
+      const canvas = document.querySelector('#piccanvas');
       const ctx = canvas.getContext('2d');
       canvas.height = img.height;
       canvas.width = img.width;
@@ -20,7 +38,7 @@
       ctx.strokeStyle = '#f00';
       ctx.strokeRect(...rect);
       const color = getAverageColor(d);
-      const box = document.querySelector('#box');
+      const box = document.querySelector('#picbox');
       box.style.backgroundColor = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`;
       console.log(color);
     });
@@ -49,26 +67,40 @@
 </script>
 </head>
 
-<body style="display: flex">
-  <canvas
-    style="
-    "
-  ></canvas>
-  <img
-    id="pic"
-    src="mountains.jpg"
-    alt="mountains"
-    style="
-      width: 700px;
-    "
-  />
-  <div
-    id="box"
-    style="
-      width: 100px;
-      height: 100px;
-      border: 1px solid red;
-    "
-  ></div>
+<body>
+  <div style="display: flex; align-items: center">
+    <button>Do Thing</button>
+    <video loop muted playsinline autoplay controls style="width: 600px">
+      <source src="Big_Buck_Bunny_720_10s_10MB.mp4" type="video/mp4"/>
+    </video>
+    <canvas id="vidcanvas"></canvas>
+    <div
+      id="vidbox"
+      style="
+        width: 100px;
+        height: 100px;
+        border: 1px solid red;
+      "
+    ></div>
+  </div>
+  <div style="display: flex">
+    <canvas id="piccanvas"></canvas>
+    <img
+      id="pic"
+      src="mountains.jpg"
+      alt="mountains"
+      style="
+        width: 700px;
+      "
+    />
+    <div
+      id="picbox"
+      style="
+        width: 100px;
+        height: 100px;
+        border: 1px solid red;
+      "
+    ></div>
+  </div>
 </body>
 </html>

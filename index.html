@@ -8,20 +8,23 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    const button = document.querySelector('button');
+    const takeSnapshotButton = document.querySelector('#takeSnapshotButton');
     const video = document.querySelector('video');
+    const useVideoButton = document.querySelector('#useVideoButton');
 
-    navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: false,
-    }).then(function(stream) {
-      video.srcObject = stream;
-      video.play();
-    }).catch(function(err) {
-      console.log("An error occurred: " + err);
-    });
+    useVideoButton.addEventListener('click', function() {
+      navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
+      }).then(function(stream) {
+        video.srcObject = stream;
+        video.play();
+      }).catch(function(err) {
+        console.log("An error occurred: " + err);
+      });
+    })
 
-    button.addEventListener('click', function() {
+    takeSnapshotButton.addEventListener('click', function() {
       const canvas = document.querySelector('#vidcanvas');
       const ctx = canvas.getContext('2d');
       canvas.height = video.offsetHeight;
@@ -80,7 +83,8 @@
 
 <body>
   <div style="display: flex; align-items: center">
-    <button>Do Thing</button>
+    <button id="takeSnapshotButton">Take Sample</button>
+    <button id="useVideoButton">Use Webcam</button>
     <video loop muted playsinline autoplay controls style="width: 600px">
       <source src="Jellyfish_1080_10s_30MB.mp4" type="video/mp4"/>
     </video>

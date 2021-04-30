@@ -10,6 +10,17 @@
   document.addEventListener("DOMContentLoaded", function() {
     const button = document.querySelector('button');
     const video = document.querySelector('video');
+
+    navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    }).then(function(stream) {
+      video.srcObject = stream;
+      video.play();
+    }).catch(function(err) {
+      console.log("An error occurred: " + err);
+    });
+
     button.addEventListener('click', function() {
       const canvas = document.querySelector('#vidcanvas');
       const ctx = canvas.getContext('2d');

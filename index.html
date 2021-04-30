@@ -12,6 +12,15 @@
     const video = document.querySelector('video');
     const useVideoButton = document.querySelector('#useVideoButton');
     
+    const togglePlayButton = document.querySelector('#togglePlayButton');
+    togglePlayButton.addEventListener('click', function() {
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+
     const toggleCanvasButton = document.querySelector('#toggleCanvasButton');
     toggleCanvasButton.addEventListener('click', function() {
       const vidCanvas = document.querySelector('#vidcanvas');
@@ -138,6 +147,7 @@
       <button id="useVideoButton">Use Webcam</button>
       <button id="toggleCanvasButton">Toggle Canvas</button>
       <button id="toggleCellsButton">Toggle Cells</button>
+      <button id="togglePlayButton">Play/Pause</button>
     </div>
   </div>
   <div style="display: flex; align-items: center">

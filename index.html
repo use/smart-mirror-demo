@@ -18,12 +18,17 @@
       if (interval) {
         window.clearInterval(interval);
         interval = null;
+        clearCells();
       } else {
         const amount = parseInt(document.querySelector('#intervalAmount').value);
         interval = window.setInterval(function() {
           doAutoAdjust();
         }, amount);
       }
+    });
+
+    document.querySelector('#clearCellsButton').addEventListener('click', function() {
+      clearCells();
     });
 
     const togglePlayButton = document.querySelector('#togglePlayButton');
@@ -92,6 +97,13 @@
         const opacity = ((color[0] + color[1] + color[2]) / 3) / 255;
         const maxOpacity = 1;
         cell.style.backgroundColor = formatRbga(0, 0, 0, opacity * maxOpacity);
+      });
+    }
+
+    function clearCells() {
+      const cells = document.querySelectorAll('.cell');
+      cells.forEach(function(cell) {
+        cell.style.backgroundColor = formatRbga(0, 0, 0, 0);
       });
     }
 
@@ -196,6 +208,7 @@
   <div class="control-panel">
     <button id="takeSnapshotButton">Take Sample</button>
     <button id="toggleAutoContrast">Toggle Auto</button>
+    <button id="clearCellsButton">Clear Cells</button>
     <button id="useVideoButton">Use Webcam</button>
     <button id="toggleCanvasButton">Toggle Canvas</button>
     <button id="toggleCellsButton">Toggle Cells</button>

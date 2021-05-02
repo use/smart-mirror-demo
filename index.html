@@ -11,7 +11,21 @@
     const takeSnapshotButton = document.querySelector('#takeSnapshotButton');
     const video = document.querySelector('video');
     const useVideoButton = document.querySelector('#useVideoButton');
+    let interval = null;
     
+    const toggleAutoContrastButton = document.querySelector('#toggleAutoContrast');
+    toggleAutoContrastButton.addEventListener('click', function() {
+      if (interval) {
+        window.clearInterval(interval);
+        interval = null;
+      } else {
+        const amount = parseInt(document.querySelector('#intervalAmount').value);
+        interval = window.setInterval(function() {
+          doAutoAdjust();
+        }, amount);
+      }
+    });
+
     const togglePlayButton = document.querySelector('#togglePlayButton');
     togglePlayButton.addEventListener('click', function() {
       if (video.paused) {
@@ -52,6 +66,10 @@
     })
 
     takeSnapshotButton.addEventListener('click', function() {
+      doAutoAdjust();
+    });
+
+    function doAutoAdjust() {
       const canvas = document.querySelector('#vidcanvas');
       const ctx = canvas.getContext('2d');
       canvas.height = video.offsetHeight;
@@ -73,7 +91,7 @@
         const maxOpacity = 1;
         cell.style.backgroundColor = formatRbga(0, 0, 0, opacity * maxOpacity);
       });
-    });
+    }
 
     function formatRbga(r, g, b, a) {
       return `rgba(${r}, ${g}, ${b}, ${a})`;
@@ -126,7 +144,7 @@
     font-size: 50px;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
-    border: 4px solid white;
+    /* border: 4px solid white; */
     height: 100%;
     display: flex;
     align-items: center;
@@ -179,10 +197,12 @@
   </div>
   <div class="control-panel">
     <button id="takeSnapshotButton">Take Sample</button>
+    <button id="toggleAutoContrast">Toggle Auto</button>
     <button id="useVideoButton">Use Webcam</button>
     <button id="toggleCanvasButton">Toggle Canvas</button>
     <button id="toggleCellsButton">Toggle Cells</button>
     <button id="togglePlayButton">Play/Pause</button>
+    <input type="number" id="intervalAmount" value="500"/>
   </div>
   <div style="display: flex; align-items: center">
     <div

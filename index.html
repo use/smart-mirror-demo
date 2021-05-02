@@ -74,7 +74,9 @@
       const ctx = canvas.getContext('2d');
       canvas.height = video.offsetHeight;
       canvas.width = video.offsetWidth;
-      ctx.drawImage(video, 0, 0, video.offsetWidth, video.offsetHeight);
+      ctx.scale(-1, 1); // apply image flipped
+      ctx.drawImage(video, 0, 0, -video.offsetWidth, video.offsetHeight);
+      ctx.scale(-1, 1); // flip canvas back
       const cells = document.querySelectorAll('.cell');
       cells.forEach(function(cell) {
         const rect = [
@@ -129,6 +131,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transform: scaleX(-1);
   }
   .overlay {
     position: absolute;

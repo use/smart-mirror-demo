@@ -100,25 +100,20 @@
     }
 
     function getAverageColor(imageData) {
-      const offsets = [0, 1, 2];
-      const numPixels = imageData.width * imageData.height;
-      console.log('numPixels', numPixels);
       let [totalR, totalG, totalB, totalA] = [0, 0, 0, 0];
-      let count = 0;
-      // debugger;
-      for (let pixelIndex = 0; pixelIndex < numPixels; pixelIndex++) {
-        let offset = pixelIndex * 4;
+      for (let offset = 0; offset < imageData.data.length; offset += 4) {
         totalR += imageData.data[offset + 0];
         totalG += imageData.data[offset + 1];
         totalB += imageData.data[offset + 2];
         totalA += imageData.data[offset + 3];
       }
-      console.log('count', count);
-      avgR = totalR / numPixels;
-      avgG = totalG / numPixels;
-      avgB = totalB / numPixels;
-      avgA = totalA / numPixels;
-      return [avgR, avgG, avgB, avgA/255];
+      const numPixels = imageData.width * imageData.height;
+      return [
+        totalR / numPixels,
+        totalG / numPixels,
+        totalB / numPixels,
+        (totalA / numPixels) / 255,
+      ];
     }
   });
 </script>

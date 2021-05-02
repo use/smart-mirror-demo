@@ -69,9 +69,15 @@
         ctx.strokeStyle = 'yellow';
         ctx.strokeRect(...rect);
         const color = getAverageColor(d);
-        cell.style.backgroundColor = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${color[3]})`;
+        const opacity = ((color[0] + color[1] + color[2]) / 3) / 255;
+        const maxOpacity = 1;
+        cell.style.backgroundColor = formatRbga(0, 0, 0, opacity * maxOpacity);
       });
     });
+
+    function formatRbga(r, g, b, a) {
+      return `rgba(${r}, ${g}, ${b}, ${a})`;
+    }
 
     function getAverageColor(imageData) {
       const offsets = [0, 1, 2];

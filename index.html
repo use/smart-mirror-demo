@@ -80,7 +80,7 @@
       canvas.height = video.offsetHeight;
       canvas.width = video.offsetWidth;
       ctx.scale(-1, 1); // apply image flipped
-      ctx.drawImage(video, 0, 0, -video.offsetWidth, video.offsetHeight);
+      ctx.drawImage(video, -video.offsetWidth, 0, video.offsetWidth, video.offsetHeight);
       ctx.scale(-1, 1); // flip canvas back
       const cells = document.querySelectorAll('.cell');
       cells.forEach(function(cell) {

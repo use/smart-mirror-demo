@@ -79,8 +79,9 @@
       const ctx = canvas.getContext('2d');
       canvas.height = video.offsetHeight;
       canvas.width = video.offsetWidth;
+      const dimensions = getImageFillDimensions(video.videoWidth, video.videoHeight, canvas.width, canvas.height);
       ctx.scale(-1, 1); // apply image flipped
-      ctx.drawImage(video, -video.offsetWidth, 0, video.offsetWidth, video.offsetHeight);
+      ctx.drawImage(video, -dimensions.width, dimensions.y, dimensions.width, dimensions.height);
       ctx.scale(-1, 1); // flip canvas back
       const cells = document.querySelectorAll('.cell');
       cells.forEach(function(cell) {
@@ -98,6 +99,16 @@
         const maxOpacity = 1;
         cell.style.backgroundColor = formatRbga(0, 0, 0, opacity * maxOpacity);
       });
+    }
+
+    function getImageFillDimensions(imgWidth, imgHeight, canvasWidth, canvasHeight){
+      var scale = Math.max(canvasWidth / imgWidth, canvasHeight / imgHeight);
+      return {
+        x: (canvasWidth / 2) - (imgWidth / 2) * scale,
+        y: (canvasHeight / 2) - (imgHeight / 2) * scale,
+        width: imgWidth * scale,
+        height: imgHeight * scale,
+      };
     }
 
     function clearCells() {

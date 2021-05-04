@@ -81,7 +81,7 @@
       canvas.width = video.offsetWidth;
       const dimensions = getImageFillDimensions(video.videoWidth, video.videoHeight, canvas.width, canvas.height);
       ctx.scale(-1, 1); // apply image flipped
-      ctx.drawImage(video, -dimensions.width, dimensions.y, dimensions.width, dimensions.height);
+      ctx.drawImage(video, -(dimensions.width + dimensions.x), dimensions.y, dimensions.width, dimensions.height);
       ctx.scale(-1, 1); // flip canvas back
       const cells = document.querySelectorAll('.cell');
       cells.forEach(function(cell) {

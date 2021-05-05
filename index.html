@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width">
-  <title>Daily Dashboard</title>
+  <title>Smart Mirror Demo</title>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     const video = document.querySelector('video');
@@ -17,7 +17,7 @@
       video.play();
       startAutoAdjust();
     }).catch(function(err) {
-      console.log("An error occurred: " + err);
+      alert("Camera didn't work - maybe something else is using it? Error message: " + err);
     });
 
     document.querySelector('#toggleAutoContrast').addEventListener('click', function() {

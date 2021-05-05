@@ -3,12 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width">
-
   <title>Daily Dashboard</title>
-
 <script>
   document.addEventListener("DOMContentLoaded", function() {
-    const takeSnapshotButton = document.querySelector('#takeSnapshotButton');
     const video = document.querySelector('video');
     let interval = null;
     
@@ -23,8 +20,7 @@
       console.log("An error occurred: " + err);
     });
 
-    const toggleAutoContrastButton = document.querySelector('#toggleAutoContrast');
-    toggleAutoContrastButton.addEventListener('click', function() {
+    document.querySelector('#toggleAutoContrast').addEventListener('click', function() {
       if (interval) {
         window.clearInterval(interval);
         interval = null;
@@ -34,19 +30,11 @@
       }
     });
 
-    function startAutoAdjust() {
-      const amount = parseInt(document.querySelector('#intervalAmount').value);
-      interval = window.setInterval(function() {
-        doAutoAdjust();
-      }, amount);
-    }
-
     document.querySelector('#clearCellsButton').addEventListener('click', function() {
       clearCells();
     });
 
-    const togglePlayButton = document.querySelector('#togglePlayButton');
-    togglePlayButton.addEventListener('click', function() {
+    document.querySelector('#togglePlayButton').addEventListener('click', function() {
       if (video.paused) {
         video.play();
       } else {
@@ -54,16 +42,13 @@
       }
     });
 
-    const toggleCanvasButton = document.querySelector('#toggleCanvasButton');
-    toggleCanvasButton.addEventListener('click', function() {
+    document.querySelector('#toggleCanvasButton').addEventListener('click', function() {
       const vidCanvas = document.querySelector('#vidcanvas');
       vidCanvas.style.display = vidCanvas.style.display === 'none' ? 'block' : 'none';
     });
 
-    const toggleCellsButton = document.querySelector('#toggleCellsButton');
-    toggleCellsButton.addEventListener('click', function() {
-      const cells = document.querySelectorAll('.cell');
-      cells.forEach(function(cell) {
+    document.querySelector('#toggleCellsButton').addEventListener('click', function() {
+      document.querySelectorAll('.cell').forEach(function(cell) {
         if (cell.style.opacity === '0') {
           cell.style.opacity = '1';
         } else {
@@ -72,9 +57,21 @@
       });
     });
 
-    takeSnapshotButton.addEventListener('click', function() {
+    document.querySelector('#takeSnapshotButton').addEventListener('click', function() {
       doAutoAdjust();
     });
+
+    document.querySelector('#controlsButton').addEventListener('click', function() {
+      const panel = document.querySelector('.control-panel__items');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    });
+
+    function startAutoAdjust() {
+      const amount = parseInt(document.querySelector('#intervalAmount').value);
+      interval = window.setInterval(function() {
+        doAutoAdjust();
+      }, amount);
+    }
 
     function doAutoAdjust() {
       const canvas = document.querySelector('#vidcanvas');
@@ -85,18 +82,17 @@
       ctx.scale(-1, 1); // apply image flipped
       ctx.drawImage(video, -(dimensions.width + dimensions.x), dimensions.y, dimensions.width, dimensions.height);
       ctx.scale(-1, 1); // flip canvas back
-      const cells = document.querySelectorAll('.cell');
-      cells.forEach(function(cell) {
+      document.querySelectorAll('.cell').forEach(function(cell) {
         const rect = [
           cell.getBoundingClientRect().x,
           cell.getBoundingClientRect().y,
           cell.getBoundingClientRect().width,
           cell.getBoundingClientRect().height,
         ];
-        const d = ctx.getImageData(...rect);
         ctx.strokeStyle = 'yellow';
         ctx.strokeRect(...rect);
-        const color = getAverageColor(d);
+        const imageData = ctx.getImageData(...rect);
+        const color = getAverageColor(imageData);
         const opacity = ((color[0] + color[1] + color[2]) / 3) / 255;
         const maxOpacity = 1;
         cell.style.backgroundColor = formatRbga(0, 0, 0, opacity * maxOpacity);
@@ -114,8 +110,7 @@
     }
 
     function clearCells() {
-      const cells = document.querySelectorAll('.cell');
-      cells.forEach(function(cell) {
+      document.querySelectorAll('.cell').forEach(function(cell) {
         cell.style.backgroundColor = formatRbga(0, 0, 0, 0);
       });
     }
@@ -140,11 +135,6 @@
         (totalA / numPixels) / 255,
       ];
     }
-
-    document.querySelector('#controlsButton').addEventListener('click', function() {
-      const panel = document.querySelector('.control-panel__items');
-      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-    });
   });
 </script>
 <style>

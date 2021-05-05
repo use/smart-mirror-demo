@@ -10,9 +10,19 @@
   document.addEventListener("DOMContentLoaded", function() {
     const takeSnapshotButton = document.querySelector('#takeSnapshotButton');
     const video = document.querySelector('video');
-    const useVideoButton = document.querySelector('#useVideoButton');
     let interval = null;
     
+    navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    }).then(function(stream) {
+      video.srcObject = stream;
+      video.play();
+      startAutoAdjust();
+    }).catch(function(err) {
+      console.log("An error occurred: " + err);
+    });
+
     const toggleAutoContrastButton = document.querySelector('#toggleAutoContrast');
     toggleAutoContrastButton.addEventListener('click', function() {
       if (interval) {
@@ -20,12 +30,16 @@
         interval = null;
         clearCells();
       } else {
-        const amount = parseInt(document.querySelector('#intervalAmount').value);
-        interval = window.setInterval(function() {
-          doAutoAdjust();
-        }, amount);
+        startAutoAdjust();
       }
     });
+
+    function startAutoAdjust() {
+      const amount = parseInt(document.querySelector('#intervalAmount').value);
+      interval = window.setInterval(function() {
+        doAutoAdjust();
+      }, amount);
+    }
 
     document.querySelector('#clearCellsButton').addEventListener('click', function() {
       clearCells();
@@ -57,18 +71,6 @@
         }
       });
     });
-
-    useVideoButton.addEventListener('click', function() {
-      navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false,
-      }).then(function(stream) {
-        video.srcObject = stream;
-        video.play();
-      }).catch(function(err) {
-        console.log("An error occurred: " + err);
-      });
-    })
 
     takeSnapshotButton.addEventListener('click', function() {
       doAutoAdjust();
@@ -138,6 +140,11 @@
         (totalA / numPixels) / 255,
       ];
     }
+
+    document.querySelector('#controlsButton').addEventListener('click', function() {
+      const panel = document.querySelector('.control-panel__items');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    });
   });
 </script>
 <style>
@@ -151,6 +158,7 @@
     }
   }
   body{
+    background-color: hsl(0, 0%, 10%);
     margin: 0;
   }
   * {
@@ -199,8 +207,6 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    display: flex;
-    flex-direction: column;
   }
   .appointments {
     border-spacing: 0;
@@ -254,7 +260,7 @@
 
 <body>
   <video class="main-video" loop muted playsinline autoplay>
-    <source src="Jellyfish_1080_10s_30MB.mp4" type="video/mp4"/>
+    <source src="" type="video/mp4"/>
   </video>
   <canvas id="vidcanvas" style="display: none; position: absolute;"></canvas>
   <div class="overlay">
@@ -402,35 +408,45 @@
         </tr>
       </table>
     </div>
-    <div class="cell" style="grid-area: 3 / 5 / span 1 / span 1">
+    <div class="cell" style="grid-area: 3 / 5 / span 1 / span 1; position: relative">
       <div class="cell-label">
         Flash Card
       </div>
-        <img
-          src="/img/Cassiopeia.svg"
-          alt="constellation Cassiopeia"
-          class="shadowed-image"
-          style="
-            width: 15rem;
-            transform: rotateX(-13deg);
-            margin-top: -1.5rem;
-            margin-bottom: -1.5rem;
-          "
-        />
-      <div style="font-size: 1.5rem">
+      <img
+        src="/img/Cassiopeia.svg"
+        alt="constellation Cassiopeia"
+        class="shadowed-image"
+        style="
+          width: 15rem;
+          transform: rotateX(-13deg);
+          margin-top: -1.5rem;
+          margin-bottom: -1.5rem;
+        "
+      />
+      <div style="font-size: 1.5rem; position: absolute; bottom: 1.5rem">
         Constellation
       </div>
     </div>
   </div>
-  <div class="control-panel">
-    <button id="takeSnapshotButton">Take Sample</button>
-    <button id="toggleAutoContrast">Toggle Auto</button>
-    <button id="clearCellsButton">Clear Cells</button>
-    <button id="useVideoButton">Use Webcam</button>
-    <button id="toggleCanvasButton">Toggle Canvas</button>
-    <button id="toggleCellsButton">Toggle Cells</button>
-    <button id="togglePlayButton">Play/Pause</button>
-    <input type="number" id="intervalAmount" value="500"/>
+  <div class="control-panel" style=>
+    <div class="control-panel__items" style="display: none">
+      <div style="
+        display: flex;
+        flex-direction: column;
+      ">
+        <button id="takeSnapshotButton">Take Sample</button>
+        <button id="toggleAutoContrast">Toggle Auto Contrast</button>
+        <button id="clearCellsButton">Clear Cells</button>
+        <button id="useVideoButton">Use Webcam</button>
+        <button id="toggleCanvasButton">Toggle Canvas</button>
+        <button id="toggleCellsButton">Toggle Cells</button>
+        <button id="togglePlayButton">Play/Pause</button>
+        <input type="number" id="intervalAmount" value="500"/>
+      </div>
+    </div>
+    <div style="text-align: right">
+      <button id="controlsButton">Controls</button>
+    </div>
   </div>
   <div style="display: flex; align-items: center">
     <div

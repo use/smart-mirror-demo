@@ -141,8 +141,20 @@
   });
 </script>
 <style>
-  body {
+  html {
     margin: 0;
+    font-size: 16px;
+  }
+  @media (max-width: 1200px) {
+    html {
+      font-size: 10px;
+    }
+  }
+  body{
+    margin: 0;
+  }
+  * {
+    box-sizing: border-box;
   }
   .main-video {
     position: absolute;
@@ -156,22 +168,32 @@
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-columns: 3fr 3fr 4fr 3fr 3fr;
+    grid-template-rows: repeat(3, 1fr);
     align-items: center;
     justify-content: center;
   }
+  @media (max-width: 1200px) {
+    .overlay {
+      grid-template-columns: 1fr 1fr 0 1fr 1fr;
+    }
+  }
   .cell {
-    font-size: 50px;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
-    /* border: 4px solid white; */
+    padding: 1.5rem;
     height: 100%;
-    display: flex;
     align-items: center;
     justify-content: center;
     transition: .2s ease-in-out all;
     opacity: 1;
+    overflow: hidden;
+    text-shadow: -.125rem .125rem 0 hsla(0, 0%, 0%, .25);
+  }
+  .cell-label {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding-bottom: 1rem;
   }
   .control-panel {
     position: absolute;
@@ -179,6 +201,53 @@
     right: 0;
     display: flex;
     flex-direction: column;
+  }
+  .appointments {
+    border-spacing: 0;
+    font-size: 1.5rem;
+  }
+  .appointments td {
+    padding: .125rem 0 .125rem 1rem;
+    vertical-align: top;
+  }
+  .appointments td:first-child {
+    padding-left: 0;
+  }
+  .checklist {
+    margin: 0;
+    padding: 0;
+  }
+  .checklist li {
+    font-size: 1.5rem;
+    margin-bottom: .5rem;
+    display: flex;
+  }
+  .checklist li::before {
+    content: '';
+    display: block;
+    margin-top: .5rem;
+    margin-right: 1rem;
+    height: 1rem;
+    width: 1rem;
+    border: .25rem solid white;
+    flex-shrink: 0;
+  }
+  .masked {
+    mask-image: linear-gradient(rgb(0, 0, 0), 90%, transparent);
+  }
+  .shadowed-image {
+    filter: drop-shadow(-.125rem .125rem 0 hsla(0, 0%, 0%, .25));
+  }
+  .forecast {
+    font-size: 1.5rem;
+    border-spacing: 0;
+  }
+  .forecast td {
+    padding: .125rem 0 .125rem 1rem;
+    vertical-align: top;
+  }
+  .forecast td:first-child {
+    padding-left: 0;
   }
 </style>
 </head>
@@ -190,31 +259,168 @@
   <canvas id="vidcanvas" style="display: none; position: absolute;"></canvas>
   <div class="overlay">
     <div class="cell">
-      <div>9:26 pm</div>
+      <div class="cell-label">
+        Monday
+      </div>
+      <div style="font-size: 1.5rem">
+        May 3, 2021
+      </div>
+      <div style="font-size: 4.75rem">6:20 am</div>
     </div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
-    <div class="cell"><div>9:26 pm</div></div>
+    <div class="cell" style="grid-area: 2 / 1 / 3 / 2">
+      <div class="cell-label">
+        Appointments
+      </div>
+      <div class="masked" style="position: relative">
+        <table class="appointments">
+          <tr>
+            <td><strong>11</strong></td>
+            <td>CSCD 530 lab</td>
+          </tr>
+          <tr>
+            <td><strong>12</strong></td>
+            <td>Lunch</td>
+          </tr>
+          <tr>
+            <td><strong>1p</strong></td>
+            <td>UX 2</td>
+          </tr>
+          <tr>
+            <td><strong>3:30p</strong></td>
+            <td>Donation cart check-in</td>
+          </tr>
+          <tr>
+            <td><strong>4:30p</strong></td>
+            <td>Follow up with management about project status</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="cell" style="grid-area: 3 / 1 / span 1 / span 1">
+      <div class="cell-label">
+        Today's Goals
+      </div>
+      <ul class="checklist masked">
+        <li>PayPal subscription research</li>
+        <li>Work on cross-posting stories</li>
+        <li>Performance check</li>
+        <li>Mirror component multisite?</li>
+      </ul>
+    </div>
+    <div class="cell" style="grid-area: 3 / 4 / span 1 / span 1">
+      <div class="cell-label">
+        Something to Read
+      </div>
+      <div style="font-size: 2.375rem; margin-bottom: 1rem">
+        The Green Hills of Earth
+      </div>
+      <div style="font-size: 1.5rem">
+        <span style="margin-right: .5em">Robert Heinlein</span>
+        <span style="opacity: .75">
+          270pg
+        </span>
+      </div>
+    </div>
+    <div class="cell" style="grid-area: 1 / 5 / span 1 / span 1">
+      <div class="cell-label">
+        Partly Sunny
+      </div>
+      <div style="
+        font-size: 10rem;
+        font-weight: 300;
+        line-height: .8;
+        margin-bottom: 1.5rem;
+      ">
+        35°
+      </div>
+      <div style="display: flex; align-items: flex-end">
+        <img
+          src="/img/emojione-monotone_sun-behind-large-cloud.svg"
+          alt="sun behind cloud icon"
+          class="shadowed-image"
+          style="width: 3.5rem"
+        />
+        <span style="font-size: 1.5rem; margin-left: 1rem">10% chance to rain</span>
+      </div>
+    </div>
+    <div class="cell" style="grid-area: 2 / 5 / span 1 / span 1">
+      <div class="cell-label">
+        Forecast
+      </div>
+      <table class="forecast">
+        <tr>
+          <td><strong>10</strong></td>
+          <td>
+            <img
+              src="/img/emojione-monotone_sun-behind-large-cloud.svg"
+              alt="sun behind cloud icon"
+              class="shadowed-image"
+              style="width: 2.5rem"
+            />
+          </td>
+          <td><strong>55°</strong></td>
+          <td>Partly Sunny</td>
+        </tr>
+        <tr>
+          <td><strong>12</strong></td>
+          <td>
+            <img
+              src="/img/emojione-monotone_sun-behind-large-cloud.svg"
+              alt="sun behind cloud icon"
+              class="shadowed-image"
+              style="width: 2.5rem"
+            />
+          </td>
+          <td><strong>57°</strong></td>
+          <td>Partly Sunny</td>
+        </tr>
+        <tr>
+          <td><strong>2p</strong></td>
+          <td>
+            <img
+              src="/img/emojione-monotone_sun-behind-rain-cloud.svg"
+              alt="sun behind cloud with rain icon"
+              class="shadowed-image"
+              style="width: 2.5rem"
+            />
+          </td>
+          <td><strong>56°</strong></td>
+          <td>25% Rain</td>
+        </tr>
+        <tr>
+          <td><strong>5p</strong></td>
+          <td>
+            <img
+              src="/img/la_cloud-moon.svg"
+              alt="moon behind cloud icon"
+              class="shadowed-image"
+              style="width: 2.5rem"
+            />
+          </td>
+          <td><strong>51°</strong></td>
+          <td>Sunset</td>
+        </tr>
+      </table>
+    </div>
+    <div class="cell" style="grid-area: 3 / 5 / span 1 / span 1">
+      <div class="cell-label">
+        Flash Card
+      </div>
+        <img
+          src="/img/Cassiopeia.svg"
+          alt="constellation Cassiopeia"
+          class="shadowed-image"
+          style="
+            width: 15rem;
+            transform: rotateX(-13deg);
+            margin-top: -1.5rem;
+            margin-bottom: -1.5rem;
+          "
+        />
+      <div style="font-size: 1.5rem">
+        Constellation
+      </div>
+    </div>
   </div>
   <div class="control-panel">
     <button id="takeSnapshotButton">Take Sample</button>

@@ -8,7 +8,15 @@
   document.addEventListener("DOMContentLoaded", function() {
     const video = document.querySelector('video');
     let interval = null;
-    
+    let theme = {
+      // text: [0, 0, 100],
+      // background: [0, 0, 0],
+      text: [176, 98, 15],
+      background: [0, 0, 100],
+    };
+
+    document.documentElement.style.setProperty('--text-color', formatHsla(...theme.text));
+
     navigator.mediaDevices.getUserMedia({
       video: true,
       audio: false,
@@ -93,9 +101,16 @@
         ctx.strokeRect(...rect);
         const imageData = ctx.getImageData(...rect);
         const color = getAverageColor(imageData);
-        const opacity = ((color[0] + color[1] + color[2]) / 3) / 255;
+        const avgVideoChunkBrightness = ((color[0] + color[1] + color[2]) / 3) / 255;
+        let opacity = 0;
+        if (theme.background[2] > 50) {
+          opacity = 1 - avgVideoChunkBrightness;
+        } else {
+          opacity = avgVideoChunkBrightness;
+        }
+        console.log(opacity);
         const maxOpacity = 1;
-        cell.style.backgroundColor = formatRbga(0, 0, 0, opacity * maxOpacity);
+        cell.style.backgroundColor = formatHsla(...theme.background, opacity * maxOpacity);
       });
     }
 
@@ -111,8 +126,12 @@
 
     function clearCells() {
       document.querySelectorAll('.cell').forEach(function(cell) {
-        cell.style.backgroundColor = formatRbga(0, 0, 0, 0);
+        cell.style.backgroundColor = formatHsla(0, 0, 0, 0);
       });
+    }
+
+    function formatHsla(h, s, l, a=1) {
+      return `hsla(${h}, ${s}%, ${l}%, ${a})`;
     }
 
     function formatRbga(r, g, b, a) {
@@ -138,6 +157,9 @@
   });
 </script>
 <style>
+  :root {
+    --text-color: hsla(0, 0%, 100%, 1);
+  }
   html {
     margin: 0;
     font-size: 16px;
@@ -183,7 +205,7 @@
   }
   .cell {
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
+    color: var(--text-color);
     padding: 1.5rem;
     height: 100%;
     align-items: center;

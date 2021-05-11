@@ -8,14 +8,39 @@
   document.addEventListener("DOMContentLoaded", function() {
     const video = document.querySelector('video');
     let interval = null;
-    let theme = {
-      // text: [0, 0, 100],
-      // background: [0, 0, 0],
-      text: [176, 98, 15],
-      background: [0, 0, 100],
-    };
+    const themes = [
+      {
+        name: 'sunglasses',
+        text: [0, 0, 100],
+        background: [0, 0, 0],
+        shadow: '-.125rem .125rem 0 hsla(0, 0%, 0%, .25)',
+      },
+      {
+        name: 'polar',
+        text: [176, 98, 15],
+        background: [0, 0, 100],
+        shadow: '-.125rem .125rem 0 hsla(0, 0%, 100%, .25)',
+      },
+      {
+        name: 'sunset',
+        text: [47, 100, 58],
+        background: [0, 0, 0],
+        shadow: '-.125rem .125rem 0 hsla(0, 0%, 0%, .25)',
+      },
+    ];
 
-    document.documentElement.style.setProperty('--text-color', formatHsla(...theme.text));
+    let theme = null;
+    let themeCounter = 0;
+
+    setTheme(themes[0]);
+
+    document.querySelector('.overlay').addEventListener('click', function() {
+      themeCounter += 1;
+      const newIndex = themeCounter % themes.length;
+      console.log(`setting theme to ${themes[newIndex].name}`);
+      setTheme(themes[newIndex]);
+      doAutoAdjust();
+    });
 
     navigator.mediaDevices.getUserMedia({
       video: true,
@@ -108,10 +133,19 @@
         } else {
           opacity = avgVideoChunkBrightness;
         }
-        console.log(opacity);
         const maxOpacity = 1;
         cell.style.backgroundColor = formatHsla(...theme.background, opacity * maxOpacity);
       });
+    }
+
+    function setTheme(newTheme) {
+      theme = newTheme;
+      document.documentElement.style.setProperty('--text-color', formatHsla(...theme.text));
+      document.documentElement.style.setProperty('--shadow', theme.shadow);
+      const rgbTextColor = HSLToRGB(...theme.text);
+      const colorMatrix = createColorizationMatrix(...rgbTextColor);
+      const colorizeFilter = document.querySelector('#colorize feColorMatrix');
+      colorizeFilter.setAttribute('values', colorMatrix);
     }
 
     function getImageFillDimensions(imgWidth, imgHeight, canvasWidth, canvasHeight){
@@ -138,6 +172,45 @@
       return `rgba(${r}, ${g}, ${b}, ${a})`;
     }
 
+    function createColorizationMatrix(r, g, b) {
+      return `
+        0 0 0 0 ${r / 255}
+        0 0 0 0 ${g / 255}
+        0 0 0 0 ${b / 255}
+        0 0 0 1 0
+      `;
+    }
+
+    function HSLToRGB(h, s, l) {
+      s /= 100;
+      l /= 100;
+
+      let c = (1 - Math.abs(2 * l - 1)) * s,
+          x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+          m = l - c/2,
+          r = 0,
+          g = 0,
+          b = 0;
+      if (0 <= h && h < 60) {
+        r = c; g = x; b = 0;
+      } else if (60 <= h && h < 120) {
+        r = x; g = c; b = 0;
+      } else if (120 <= h && h < 180) {
+        r = 0; g = c; b = x;
+      } else if (180 <= h && h < 240) {
+        r = 0; g = x; b = c;
+      } else if (240 <= h && h < 300) {
+        r = x; g = 0; b = c;
+      } else if (300 <= h && h < 360) {
+        r = c; g = 0; b = x;
+      }
+      r = Math.round((r + m) * 255);
+      g = Math.round((g + m) * 255);
+      b = Math.round((b + m) * 255);
+
+      return [r, g, b];
+    }
+
     function getAverageColor(imageData) {
       let [totalR, totalG, totalB, totalA] = [0, 0, 0, 0];
       for (let offset = 0; offset < imageData.data.length; offset += 4) {
@@ -159,6 +232,7 @@
 <style>
   :root {
     --text-color: hsla(0, 0%, 100%, 1);
+    --shadow: none,
   }
   html {
     margin: 0;
@@ -213,7 +287,7 @@
     transition: .2s ease-in-out all;
     opacity: 1;
     overflow: hidden;
-    text-shadow: -.125rem .125rem 0 hsla(0, 0%, 0%, .25);
+    text-shadow: var(--shadow);
   }
   .cell-label {
     font-size: 1.5rem;
@@ -252,14 +326,14 @@
     margin-right: 1rem;
     height: 1rem;
     width: 1rem;
-    border: .25rem solid white;
+    border: .25rem solid var(--text-color);
     flex-shrink: 0;
   }
   .masked {
     mask-image: linear-gradient(rgb(0, 0, 0), 90%, transparent);
   }
   .shadowed-image {
-    filter: drop-shadow(-.125rem .125rem 0 hsla(0, 0%, 0%, .25));
+    filter: url(#colorize);
   }
   .forecast {
     font-size: 1.5rem;
@@ -475,5 +549,12 @@
       "
     ></div>
   </div>
+  <svg>
+    <defs>
+      <filter id="colorize" color-interpolation-filters="sRGB">
+        <feColorMatrix type="matrix" values=""/>
+      </filter>
+    </defs>
+  </svg>
 </body>
 </html>
